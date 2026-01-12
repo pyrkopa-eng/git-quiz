@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <title>Git Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1d2671, #c33764);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #333;
+    }
+
+    .quiz-container {
+      background: white;
+      width: 500px;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      text-align: center;
+      color: #1d2671;
+    }
+
+    .question {
+      font-size: 18px;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .options label {
+      display: block;
+      background: #f4f4f4;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .options label:hover {
+      background: #dce3ff;
+    }
+
+    button {
+      background: #1d2671;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    button:hover {
+      background: #141a4f;
+    }
+
+    .progress {
+      text-align: center;
+      margin-top: 10px;
+      color: #555;
+    }
+
+    .result {
+      text-align: center;
+      font-size: 22px;
+      color: #c33764;
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <h1>Git Commands Quiz</h1>
+  <div id="quiz"></div>
+  <button id="nextBtn" onclick="nextQuestion()">Επόμενο</button>
+  <div class="progress" id="progress"></div>
+</div>
+
+<script>
+const questions = [
+  {
+    question: "Ποια εντολή αρχικοποιεί ένα νέο Git repository;",
+    options: ["git start", "git init", "git new", "git create"],
+    answer: 1
+  },
+  {
+    question: "Ποια εντολή δείχνει την κατάσταση των αρχείων;",
+    options: ["git log", "git status", "git check", "git state"],
+    answer: 1
+  },
+  {
+    question: "Πώς προσθέτουμε όλα τα αρχεία στο staging area;",
+    options: ["git add .", "git commit -a", "git push all", "git stage *"],
+    answer: 0
+  },
+  {
+    question: "Ποια εντολή δημιουργεί commit;",
+    options: ["git save", "git commit", "git push", "git snapshot"],
+    answer: 1
+  },
+  {
+    question: "Πώς βλέπουμε το ιστορικό των commits;",
+    options: ["git history", "git commits", "git log", "git show"],
+    answer: 2
+  },
+  {
+    question: "Ποια εντολή δημιουργεί νέο branch;",
+    options: ["git new-branch", "git branch", "git fork", "git checkout"],
+    answer: 1
+  },
+  {
+    question: "Πώς αλλάζουμε branch;",
+    options: ["git change", "git checkout", "git move", "git switch-branch"],
+    answer: 1
+  },
+  {
+    question: "Ποια εντολή στέλνει commits στο remote repository;",
+    options: ["git upload", "git send", "git push", "git publish"],
+    answer: 2
+  },
+  {
+    question: "Ποια εντολή κατεβάζει αλλαγές από το remote;",
+    options: ["git pull", "git fetch", "git clone", "Όλες οι παραπάνω"],
+    answer: 3
+  },
+  {
+    question: "Ποια εντολή αντιγράφει ένα repository τοπικά;",
+    options: ["git pull", "git clone", "git copy", "git fork"],
+    answer: 1
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+const quizDiv = document.getElementById("quiz");
+const progressDiv = document.getElementById("progress");
+const nextBtn = document.getElementById("nextBtn");
+
+function loadQuestion() {
+  const q = questions[currentQuestion];
+  quizDiv.innerHTML = `
+    <div class="question">${q.question}</div>
+    <div class="options">
+      ${q.options.map((opt, i) => `
+        <label>
+          <input type="radio" name="option" value="${i}">
+          ${opt}
+        </label>
+      `).join("")}
+    </div>
+  `;
+  progressDiv.innerText = `Ερώτηση ${currentQuestion + 1} από ${questions.length}`;
+}
+
+function nextQuestion() {
+  const selected = document.querySelector('input[name="option"]:checked');
+  if (!selected) {
+    alert("Διάλεξε μια απάντηση!");
+    return;
+  }
+
+  if (parseInt(selected.value) === questions[currentQuestion].answer) {
+    score++;
+  }
+
+  currentQuestion++;
+
+  if (currentQuestion < questions.length) {
+    loadQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  quizDiv.innerHTML = `
+    <div class="result">
+      🎉 Τελικό Σκορ <br>
+      ${score} / ${questions.length}
+    </div>
+  `;
+  nextBtn.style.display = "none";
+  progressDiv.innerText = "";
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
