@@ -8,10 +8,17 @@
       font-family: Arial, sans-serif;
       background: linear-gradient(135deg, #1d2671, #c33764);
       height: 100vh;
+      margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      color: #333;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
     }
 
     .quiz-container {
@@ -20,6 +27,7 @@
       padding: 25px;
       border-radius: 10px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      z-index: 2;
     }
 
     h1 {
@@ -40,7 +48,6 @@
       margin-bottom: 10px;
       border-radius: 5px;
       cursor: pointer;
-      transition: background 0.3s;
     }
 
     .options label:hover {
@@ -51,11 +58,10 @@
       background: #1d2671;
       color: white;
       border: none;
-      padding: 10px 20px;
+      padding: 10px;
       border-radius: 5px;
       cursor: pointer;
       font-size: 16px;
-      margin-top: 10px;
       width: 100%;
     }
 
@@ -78,6 +84,8 @@
 </head>
 <body>
 
+<canvas id="confetti"></canvas>
+
 <div class="quiz-container">
   <h1>Git Commands Quiz</h1>
   <div id="quiz"></div>
@@ -87,56 +95,16 @@
 
 <script>
 const questions = [
-  {
-    question: "Ποια εντολή αρχικοποιεί ένα νέο Git repository;",
-    options: ["git start", "git init", "git new", "git create"],
-    answer: 1
-  },
-  {
-    question: "Ποια εντολή δείχνει την κατάσταση των αρχείων;",
-    options: ["git log", "git status", "git check", "git state"],
-    answer: 1
-  },
-  {
-    question: "Πώς προσθέτουμε όλα τα αρχεία στο staging area;",
-    options: ["git add .", "git commit -a", "git push all", "git stage *"],
-    answer: 0
-  },
-  {
-    question: "Ποια εντολή δημιουργεί commit;",
-    options: ["git save", "git commit", "git push", "git snapshot"],
-    answer: 1
-  },
-  {
-    question: "Πώς βλέπουμε το ιστορικό των commits;",
-    options: ["git history", "git commits", "git log", "git show"],
-    answer: 2
-  },
-  {
-    question: "Ποια εντολή δημιουργεί νέο branch;",
-    options: ["git new-branch", "git branch", "git fork", "git checkout"],
-    answer: 1
-  },
-  {
-    question: "Πώς αλλάζουμε branch;",
-    options: ["git change", "git checkout", "git move", "git switch-branch"],
-    answer: 1
-  },
-  {
-    question: "Ποια εντολή στέλνει commits στο remote repository;",
-    options: ["git upload", "git send", "git push", "git publish"],
-    answer: 2
-  },
-  {
-    question: "Ποια εντολή κατεβάζει αλλαγές από το remote;",
-    options: ["git pull", "git fetch", "git clone", "Όλες οι παραπάνω"],
-    answer: 3
-  },
-  {
-    question: "Ποια εντολή αντιγράφει ένα repository τοπικά;",
-    options: ["git pull", "git clone", "git copy", "git fork"],
-    answer: 1
-  }
+  { question: "Ποια εντολή αρχικοποιεί repository;", options: ["git start", "git init", "git new", "git create"], answer: 1 },
+  { question: "Ποια εντολή δείχνει status;", options: ["git log", "git status", "git check", "git state"], answer: 1 },
+  { question: "Προσθήκη όλων των αρχείων;", options: ["git add .", "git commit -a", "git push all", "git stage *"], answer: 0 },
+  { question: "Δημιουργία commit;", options: ["git save", "git commit", "git push", "git snapshot"], answer: 1 },
+  { question: "Ιστορικό commits;", options: ["git history", "git commits", "git log", "git show"], answer: 2 },
+  { question: "Νέο branch;", options: ["git new-branch", "git branch", "git fork", "git checkout"], answer: 1 },
+  { question: "Αλλαγή branch;", options: ["git change", "git checkout", "git move", "git switch"], answer: 1 },
+  { question: "Στείλε commits στο remote;", options: ["git upload", "git send", "git push", "git publish"], answer: 2 },
+  { question: "Κατέβασμα αλλαγών;", options: ["git pull", "git fetch", "git clone", "Όλες"], answer: 3 },
+  { question: "Αντιγραφή repository;", options: ["git pull", "git clone", "git copy", "git fork"], answer: 1 }
 ];
 
 let currentQuestion = 0;
@@ -151,15 +119,15 @@ function loadQuestion() {
   quizDiv.innerHTML = `
     <div class="question">${q.question}</div>
     <div class="options">
-      ${q.options.map((opt, i) => `
+      ${q.options.map((o, i) => `
         <label>
           <input type="radio" name="option" value="${i}">
-          ${opt}
+          ${o}
         </label>
       `).join("")}
     </div>
   `;
-  progressDiv.innerText = `Ερώτηση ${currentQuestion + 1} από ${questions.length}`;
+  progressDiv.innerText = `Ερώτηση ${currentQuestion + 1} / ${questions.length}`;
 }
 
 function nextQuestion() {
@@ -169,9 +137,7 @@ function nextQuestion() {
     return;
   }
 
-  if (parseInt(selected.value) === questions[currentQuestion].answer) {
-    score++;
-  }
+  if (+selected.value === questions[currentQuestion].answer) score++;
 
   currentQuestion++;
 
@@ -185,12 +151,46 @@ function nextQuestion() {
 function showResult() {
   quizDiv.innerHTML = `
     <div class="result">
-      🎉 Τελικό Σκορ <br>
+      🎯 Τελικό Σκορ<br>
       ${score} / ${questions.length}
     </div>
   `;
   nextBtn.style.display = "none";
   progressDiv.innerText = "";
+
+  if (score >= 5) startConfetti();
+}
+
+/* 🎉 CONFETTI */
+function startConfetti() {
+  const canvas = document.getElementById("confetti");
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const pieces = Array.from({ length: 150 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 6 + 4,
+    d: Math.random() * 5 + 2,
+    color: `hsl(${Math.random() * 360}, 100%, 50%)`
+  }));
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      ctx.beginPath();
+      ctx.fillStyle = p.color;
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+      p.y += p.d;
+      if (p.y > canvas.height) p.y = -10;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  setTimeout(() => ctx.clearRect(0, 0, canvas.width, canvas.height), 4000);
 }
 
 loadQuestion();
