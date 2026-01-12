@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <title>Git Commands Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    .quiz-container {
+      background: #fff;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 8px;
+    }
+    h2 {
+      margin-bottom: 10px;
+    }
+    .question {
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 10px 15px;
+      background: #007acc;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005fa3;
+    }
+    .result {
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <h1>Quiz: Git Commands</h1>
+  <form id="quizForm"></form>
+  <button onclick="submitQuiz()">Υποβολή</button>
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+const questions = [
+  {
+    question: "Ποια εντολή αρχικοποιεί ένα νέο Git repository;",
+    options: ["git start", "git init", "git new", "git create"],
+    answer: 1
+  },
+  {
+    question: "Ποια εντολή εμφανίζει την κατάσταση των αρχείων;",
+    options: ["git log", "git status", "git check", "git state"],
+    answer: 1
+  },
+  {
+    question: "Πώς προσθέτουμε όλα τα αρχεία στο staging area;",
+    options: ["git add .", "git commit -a", "git push all", "git stage *"],
+    answer: 0
+  },
+  {
+    question: "Ποια εντολή δημιουργεί ένα commit;",
+    options: ["git save", "git push", "git commit", "git snapshot"],
+    answer: 2
+  },
+  {
+    question: "Πώς βλέπουμε το ιστορικό των commits;",
+    options: ["git history", "git commits", "git log", "git show"],
+    answer: 2
+  },
+  {
+    question: "Ποια εντολή δημιουργεί νέο branch;",
+    options: ["git new-branch", "git branch", "git checkout", "git fork"],
+    answer: 1
+  },
+  {
+    question: "Πώς αλλάζουμε branch;",
+    options: ["git move", "git change", "git checkout", "git switch-branch"],
+    answer: 2
+  },
+  {
+    question: "Ποια εντολή στέλνει τα commits στο remote repository;",
+    options: ["git send", "git upload", "git push", "git publish"],
+    answer: 2
+  },
+  {
+    question: "Ποια εντολή κατεβάζει αλλαγές από το remote repository;",
+    options: ["git pull", "git fetch", "git clone", "Όλες οι παραπάνω"],
+    answer: 3
+  },
+  {
+    question: "Ποια εντολή αντιγράφει ένα remote repository τοπικά;",
+    options: ["git pull", "git copy", "git clone", "git fork"],
+    answer: 2
+  }
+];
+
+const quizForm = document.getElementById("quizForm");
+
+questions.forEach((q, index) => {
+  const div = document.createElement("div");
+  div.classList.add("question");
+  div.innerHTML = `<h2>${index + 1}. ${q.question}</h2>`;
+  
+  q.options.forEach((option, i) => {
+    div.innerHTML += `
+      <label>
+        <input type="radio" name="q${index}" value="${i}">
+        ${option}
+      </label><br>
+    `;
+  });
+
+  quizForm.appendChild(div);
+});
+
+function submitQuiz() {
+  let score = 0;
+
+  questions.forEach((q, index) => {
+    const answer = document.querySelector(`input[name="q${index}"]:checked`);
+    if (answer && parseInt(answer.value) === q.answer) {
+      score++;
+    }
+  });
+
+  document.getElementById("result").innerText =
+    `Το σκορ σου είναι ${score} / ${questions.length}`;
+}
+</script>
+
+</body>
+</html>
